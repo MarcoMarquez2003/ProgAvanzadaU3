@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primer pagina Vue</title>
+    <title>Primer página Vue</title>
     <style>
         input {
             background-color: gray;
+        }
+
+        input::placeholder {
+            color: black;
         }
     </style>
 </head>
@@ -21,15 +25,32 @@
                 <input type="text" v-model="usuario" placeholder="Escribe aquí" name="nombre">
             </fieldset>
         </form>
+
         <hr>
         <form>
-            <input type="number" v-model="valor1" name="numero1">
+            <input type="number" v-model="valor1" placeholder="Número 1" name="numero1">
             <br>
-            <input type="number" v-model="valor2" name="numero2">
+            <input type="number" v-model="valor2" placeholder="Número 2" name="numero2">
             <br>
             <button v-on:click="resultado = valor1 + valor2" type="button">Sumar</button>
         </form>
         <label>Resultado: {{ resultado }}</label>
+
+        <hr>
+        <h3>Añadir a la lista</h3>
+        <form>
+            <input type="text" v-model="nue_nom" placeholder="Nombre" name="nuevoNombre">
+            <br>
+            <input type="text" v-model="nue_rol" placeholder="Rol" name="nuevoRol">
+            <br>
+            <button type="button" @click="agregarElemento">Añadir</button>
+        </form>
+        <h3>Lista de personas</h3>
+        <ul>
+            <li v-for="(persona, index) in lista" :key="index">
+                Nombre: {{ persona.nombre }}, Rol: {{ persona.rol }}
+            </li>
+        </ul>
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -43,13 +64,31 @@
                 let contenedor = ref(0);
                 let valor1 = ref(0);
                 let valor2 = ref(0);
+                let lista = ref([]);
+                let nue_nom = ref('');
+                let nue_rol = ref('');
+
+                const agregarElemento = () => {
+                    if (nue_nom.value && nue_rol.value) {
+                        lista.value.push({
+                            nombre: nue_nom.value,
+                            rol: nue_rol.value
+                        });
+                        nue_nom.value = '';
+                        nue_rol.value = '';
+                    }
+                };
 
                 return {
                     usuario,
                     resultado,
                     contenedor,
                     valor1,
-                    valor2
+                    valor2,
+                    lista,
+                    nue_nom,
+                    nue_rol,
+                    agregarElemento
                 };
             }
         }).mount('#app');
