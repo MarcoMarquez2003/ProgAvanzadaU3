@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primer pagina Vue</title>
+    <style>
+        input {
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <button @click="contenedor++">Click: {{ contenedor }}</button>
+
+        <h3>Tu nombre es: {{ usuario }}</h3>
+        <form>
+            <fieldset>
+                <label>Nombre</label>
+                <input type="text" v-model="usuario" placeholder="Escribe aquí" name="nombre">
+            </fieldset>
+        </form>
+        <hr>
+        <form>
+            <input type="number" v-model="valor1" name="numero1">
+            <br>
+            <input type="number" v-model="valor2" name="numero2">
+            <br>
+            <button v-on:click="resultado = valor1 + valor2" type="button">Sumar</button>
+        </form>
+        <label>Resultado: {{ resultado }}</label>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp, ref } = Vue;
+
+        createApp({
+            setup() {
+                let usuario = ref('');
+                let resultado = ref(0);
+                let contenedor = ref(0);
+                let valor1 = ref(0);
+                let valor2 = ref(0);
+
+                return {
+                    usuario,
+                    resultado,
+                    contenedor,
+                    valor1,
+                    valor2
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
