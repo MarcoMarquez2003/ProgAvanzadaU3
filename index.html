@@ -1,31 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html> 
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login con JSON Local</title>
+    <title>Login</title>
     <style>
         input {
             background-color: gray;
             color: white;
         }
+        .welcome-page {
+            text-align: center;
+            margin-top: 50px;
+        }
     </style>
 </head>
 <body>
     <div id="app">
-        <h3>Bienvenido a la app</h3>
-        <form @submit.prevent="Login">
-            <fieldset>
-                <label for="email">Email</label>
-                <input type="email" v-model="email" placeholder="Escribe aquí" required>
-            </fieldset>
-            <fieldset>
-                <label for="password">Password</label>
-                <input type="password" v-model="password" placeholder="Escribe aquí" required>
-            </fieldset>
-            <button type="submit">Iniciar Sesión</button>
-        </form>
-        <div v-if="errorMessage" style="color: red;">{{ errorMessage }}</div>
+        <div v-if="!loggedIn">
+            <h3>Bienvenido a la app</h3>
+            <form @submit.prevent="Login">
+                <fieldset>
+                    <label for="email">Email</label>
+                    <input type="email" v-model="email" placeholder="Escribe aquí" required>
+                </fieldset>
+                <fieldset>
+                    <label for="password">Password</label>
+                    <input type="password" v-model="password" placeholder="Escribe aquí" required>
+                </fieldset>
+                <button type="submit">Iniciar Sesión</button>
+                <p style="color: red;" v-if="errorMessage">{{ errorMessage }}</p>
+            </form>
+        </div>
+        <div v-else class="welcome-page">
+            <h1>Bienvenido a tu cuenta</h1>
+        </div>
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -37,24 +46,25 @@
                 const email = ref('');
                 const password = ref('');
                 const errorMessage = ref('');
+                const loggedIn = ref(false);
 
-                const Login = async () => {
+                const Login = () => {
                     errorMessage.value = '';
-                    try {
-                        const response = await fetch('users.json');
-                        const users = await response.json();
 
-                        const user = users.find(u => u.email === email.value && u.password === password.value);
+                    fetch('users.json')
+                        .then(response => response.json())
+                        .then(users => {
+                            const user = users.find(u => u.email === email.value && u.password === password.value);
 
-                        if (user) {
-                            alert('Inicio de sesión exitoso');
-                        } else {
-                            errorMessage.value = 'Email o contraseña incorrectos';
-                        }
-                    } catch (error) {
-                        console.error('Error al cargar usuarios:', error);
-                        errorMessage.value = 'No se pudo iniciar sesion';
-                    }
+                            if (user) {
+                                loggedIn.value = true; // Mostrar la página de bienvenida
+                            } else {
+                                errorMessage.value = 'Email o contraseña incorrectos';
+                            }
+                        })
+                        .catch(() => {
+                            errorMessage.value = 'No se pudo iniciar sesión'; // Manejo simple del error
+                        });
                 };
 
                 return {
@@ -62,10 +72,10 @@
                     password,
                     Login,
                     errorMessage,
+                    loggedIn,
                 };
             }
         }).mount('#app');
     </script>
 </body>
 </html>
-
